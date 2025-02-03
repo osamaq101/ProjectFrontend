@@ -1,0 +1,50 @@
+﻿@model AuthAppFrontend.Models.User
+
+@{
+    ViewData["Title"] = "Profile";
+    // Cast ViewData["Profile"] directly to the type or use dynamic
+    var profile = ViewData["Profile"] as dynamic;
+
+    // Access properties from the profile object
+    var name = profile?.Name ?? "Unknown";
+    var email = profile?.Email ?? "Not Provided";
+    var imageUrl = profile?.ImageUrl ?? "/img/default-profile.png";
+}
+
+@if (ViewData["Message"] != null)
+{
+    <div class="alert alert-info">@ViewData["Message"]</div>
+}
+
+<h2 class="mb-4">Your Profile</h2>
+
+<div class="card">
+    <div class="card-body text-center">
+        <div>
+            <h2>Your Profile</h2>
+            <div>
+                <img src="@(profile.ImageUrl?.Split(' ')[0] ?? "/img/default-profile.png")"
+                     alt="Profile Image"
+                     style="width: 150px; height: 150px; object-fit: cover;" />
+            </div>
+            <p><strong>@name</strong></p>
+            <p>Email: @email</p>
+        </div>
+    </div>
+</div>
+
+<h3 class="mb-4">Upload Profile Image</h3>
+
+<form enctype="multipart/form-data" method="post" asp-controller="Auth" asp-action="UploadImage">
+    <div class="mb-3">
+        <input type="file" name="profileImage" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Upload Image</button>
+</form>
+
+@if (ViewData["Message"] != null)
+{
+    <div class="alert alert-info mt-4">
+        @ViewData["Message"]
+    </div>
+}

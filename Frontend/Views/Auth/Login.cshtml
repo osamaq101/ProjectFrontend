@@ -1,0 +1,25 @@
+﻿@model AuthAppFrontend.Models.User
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2 class="mb-4">Log In</h2>
+
+@if (!string.IsNullOrEmpty(ViewData["Message"]?.ToString()))
+{
+    <div class="alert alert-success">@ViewData["Message"]</div>
+}
+
+<form method="post" asp-controller="Auth" asp-action="Login">
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="passwordHash" class="form-label">Password</label>
+        <input asp-for="passwordHash" type="password" class="form-control" />
+        <span asp-validation-for="passwordHash" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Log In</button>
+</form>
