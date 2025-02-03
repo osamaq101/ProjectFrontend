@@ -25,20 +25,39 @@ namespace AuthAppFrontend.Controllers
             return View();
         }
 
-        // POST: Auth/Register
         [HttpPost]
         public async Task<IActionResult> Register(User user)
         {
-            // Use specific registration endpoint
-            var response = await _httpClient.PostAsJsonAsync("https://fqzjarsewl.execute-api.us-east-2.amazonaws.com/Prod/api/values/signup", user);
-            if (response.IsSuccessStatusCode)
+            //if (!ModelState.IsValid)
+            //{
+            //    return View(user); 
+            //}
+
+            try
             {
-                TempData["Message"] = "Registration successful! You can now log in.";
-                return RedirectToAction("Login");
+                var response = await _httpClient.PostAsJsonAsync("https://fqzjarsewl.execute-api.us-east-2.amazonaws.com/Prod/api/values/signup", user);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["Message"] = "Registration successful! You can now log in.";
+                    return RedirectToAction("Login"); // Redirect only on success
+                }
+
+                // Set an error message from the API response
+                var errorResponse = await response.Content.ReadAsStringAsync();
+                ViewBag.ErrorMessage = $"Registration failed: {errorResponse}";
             }
-            ModelState.AddModelError(string.Empty, "Registration failed. Please try again.");
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "An unexpected error occurred. Please try again later.";
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+
             return View(user);
         }
+
+
+
 
         // GET: Auth/Login
         public IActionResult Login()
@@ -83,7 +102,9 @@ namespace AuthAppFrontend.Controllers
             }
             else
             {
+               
                 ModelState.AddModelError(string.Empty, "Invalid login credentials.");
+                ViewData["ErrorMessage"] = "Invalid username or password. Please try again.";
             }
 
             return View(user);
